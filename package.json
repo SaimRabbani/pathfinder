@@ -1,0 +1,43 @@
+{
+  "name": "pathfinder-backend",
+  "version": "1.0.0",
+  "description": "Backend for PathFinder, an AI-assisted career and course recommendation platform.",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "nodemon --watch server --ext js server/server.js",
+    "dev:client": "npm --prefix client run dev",
+    "dev:full": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "postinstall": "npm --prefix client install",
+    "build": "npm --prefix client run build",
+    "lint:client": "npm --prefix client run lint",
+    "start": "node server/server.js",
+    "seed": "node scripts/seedData.js",
+    "make-admin": "node scripts/promoteUserToAdmin.js",
+    "verify:auth": "node scripts/verifyAuthFlow.js",
+    "verify:email": "node scripts/verifyEmailService.js",
+    "verify:assessment": "node scripts/verifyAssessmentFlow.js",
+    "verify:providers": "node scripts/verifyRecommendationProviders.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongo-sanitize": "^1.1.0",
+    "mongoose": "^8.6.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.4"
+  }
+}

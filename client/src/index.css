@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Tailwind v4 uses the system preference by default. PathFinder uses this
+   selector so the in-app theme button can control every dark:* utility. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}

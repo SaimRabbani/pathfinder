@@ -1,0 +1,12 @@
+.git
+.gitignore
+.agents
+.codex
+.npm-cache
+node_modules
+client/node_modules
+client/dist
+.env
+client/.env
+npm-debug.log*
+*.log
