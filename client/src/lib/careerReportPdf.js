@@ -169,19 +169,22 @@ export const downloadCareerReportPdf = ({ assessment, student }) => {
     throw new Error('Assessment data is not available for this report.');
   }
 
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) return false;
+
   const html = buildReportHtml({ assessment, student });
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
   const studentName = safeFilename(student?.name || 'Student');
   const date = new Date(assessment.completedAt || assessment.createdAt || Date.now())
     .toISOString()
     .slice(0, 10);
 
-  link.href = url;
-  link.download = `PathFinder_Career_Report_${studentName}_${date}.html`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.document.title = `PathFinder_Career_Report_${studentName}_${date}`;
+  printWindow.onafterprint = () => printWindow.close();
+  printWindow.focus();
+  printWindow.setTimeout(() => printWindow.print(), 300);
+
+  return true;
 };
