@@ -39,12 +39,20 @@ const formatDate = (value) => {
   }).format(date);
 };
 
-const scoreRows = (scores, labels) =>
-  Object.entries(labels)
+const scoreRows = (scores, labels) => {
+  const values = Object.keys(labels).map((key) => {
+    const value = Number(scores?.[key] ?? 0);
+    return Number.isFinite(value) ? value : 0;
+  });
+  const maxScore = labels === APTITUDE_LABELS
+    ? 2
+    : Math.max(1, ...values);
+
+  return Object.entries(labels)
     .map(([key, label]) => {
-      const score = Number(scores?.[key] ?? 0);
-      const safeScore = Number.isFinite(score) ? score : 0;
-      const width = Math.max(0, Math.min(100, safeScore / (key === 'logical' || key === 'numerical' || key === 'verbal' ? 2 : 10) * 100));
+      const rawScore = Number(scores?.[key] ?? 0);
+      const safeScore = Number.isFinite(rawScore) ? rawScore : 0;
+      const width = Math.max(0, Math.min(100, (safeScore / maxScore) * 100));
       return `
         <div class="score-row">
           <div class="score-heading"><span>${escapeHtml(label)}</span><strong>${escapeHtml(safeScore)}</strong></div>
@@ -52,6 +60,7 @@ const scoreRows = (scores, labels) =>
         </div>`;
     })
     .join('');
+};
 
 const recommendationCards = (recommendations) => {
   if (!Array.isArray(recommendations) || recommendations.length === 0) {
