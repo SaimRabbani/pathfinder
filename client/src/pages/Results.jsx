@@ -6,6 +6,7 @@ import {
   Bookmark,
   ChevronLeft,
   ExternalLink,
+  FileDown,
   GraduationCap,
   RefreshCw,
   Sparkles
@@ -40,9 +41,12 @@ import {
 } from '../components/Ui';
 import { useToast } from '../hooks/useToast';
 import api from '../lib/api';
+import { useAuth } from '../hooks/useAuth';
+import { downloadCareerReportPdf } from '../lib/careerReportPdf';
 
 const Results = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const { error: toastError, success } = useToast();
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,6 +78,21 @@ const Results = () => {
       }
     }
   }, [fetchResults]);
+
+  const handleDownloadPdf = () => {
+    try {
+      const opened = downloadCareerReportPdf({ assessment, student: user });
+
+      if (!opened) {
+        toastError('Allow pop-ups for PathFinder to create your PDF report.');
+        return;
+      }
+
+      success('Report opened for printing. Choose “Save as PDF” in the print destination.');
+    } catch (err) {
+      toastError(err.message || 'Unable to prepare the PDF report.');
+    }
+  };
 
   const toggleBookmark = (careerId, careerTitle, description) => {
     const saved = localStorage.getItem('bookmarked_careers');
@@ -167,10 +186,16 @@ const Results = () => {
             <ChevronLeft className="mr-1 h-4 w-4" />
             Back to history
           </Link>
-          <Button type="button" variant="outline" size="sm" onClick={fetchResults}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh cached results
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" size="sm" onClick={handleDownloadPdf}>
+              <FileDown className="mr-2 h-4 w-4" />
+              Download PDF
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={fetchResults}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh cached results
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
